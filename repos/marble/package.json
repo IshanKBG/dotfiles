@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@carbon/themes": "^11.34.0",
     "@fontsource/ibm-plex-mono": "^5.0.13",
     "@fontsource/ibm-plex-sans": "^5.0.20",
     "@fontsource/ibm-plex-serif": "^5.0.13",
