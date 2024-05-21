@@ -1,26 +1,29 @@
 import = [
- " ~/.config/alacritty/catppuccin/catppuccin-mocha.toml"
+  "/Users/ishankbg/.npm/_npx/808b709e6234a442/node_modules/alacritty-themes/themes/Gruvbox-Dark.toml"
 ]
 live_config_reload = true
+
 [window]
 option_as_alt = "Both"
+
 [env]
 TERM = "xterm-256color"
+
 [font]
-size = 20.0
+size = 20
 
-[font.bold]
-family = "JetBrainsMono Nerd Font"
-style = "Heavy"
+  [font.bold]
+  family = "JetBrainsMono Nerd Font"
+  style = "Heavy"
 
-[font.bold_italic]
-family = "JetBrainsMono Nerd Font"
-style = "Heavy Italic"
+  [font.bold_italic]
+  family = "JetBrainsMono Nerd Font"
+  style = "Heavy Italic"
 
-[font.italic]
-family = "JetBrainsMono Nerd Font"
-style = "Medium Italic"
+  [font.italic]
+  family = "JetBrainsMono Nerd Font"
+  style = "Medium Italic"
 
-[font.normal]
-family = "JetBrainsMono Nerd Font"
-style = "Medium"
+  [font.normal]
+  family = "JetBrainsMono Nerd Font"
+  style = "Medium"
