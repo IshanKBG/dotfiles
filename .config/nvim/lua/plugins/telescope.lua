@@ -46,9 +46,10 @@ return {
 				builtin.current_buffer_fuzzy_find,
 				{ desc = "Fuzzy find string in current buffer" }
 			)
-
 			vim.keymap.set("n", "<leader>gw", builtin.grep_string, { desc = "Grep string in cwd" })
-
+      vim.keymap.set('n', '<leader>sn', function()
+        builtin.find_files { cwd = vim.fn.stdpath 'config' }
+      end, { desc = '[S]earch [N]eovim files' })
 			require("telescope").load_extension("ui-select")
 		end,
 	},

@@ -1,175 +1,218 @@
 return {
 	{
-		"williamboman/mason.nvim",
-		lazy = false,
-		config = function()
-			require("mason").setup()
-		end,
-	},
-	{
-		"williamboman/mason-lspconfig.nvim",
-		lazy = false,
-		opts = {
-			auto_install = true,
-		},
-		config = function()
-			require("mason-lspconfig").setup({
-				ensure_installed = {
-					"tailwindcss",
-					"lua_ls",
-					"tsserver",
-					"rust_analyzer",
-					"clangd",
-					"pyright",
-					"astro",
-					"denols",
-				},
-			})
-		end,
-	},
-	{
 		"neovim/nvim-lspconfig",
 		dependencies = {
-			"hrsh7th/cmp-nvim-lsp",
+			"folke/neodev.nvim",
+			"williamboman/mason.nvim",
+			"williamboman/mason-lspconfig.nvim",
+			"WhoIsSethDaniel/mason-tool-installer.nvim",
+
+			{ "j-hui/fidget.nvim", opts = {} },
+
+			-- Autoformatting
+			"stevearc/conform.nvim",
+
+			-- Schema information
+			"b0o/SchemaStore.nvim",
 		},
 		config = function()
-			local lspconfig = require("lspconfig")
-			local cmp_nvim_lsp = require("cmp_nvim_lsp")
+			require("neodev").setup({
+				-- library = {
+				--   plugins = { "nvim-dap-ui" },
+				--   types = true,
+				-- },
+			})
 
-			local keymap = vim.keymap
-
-			local opts = { noremap = true, silent = true }
-
-			local on_attach = function(client, bufnr)
-				opts.buffer = bufnr
-
-				-- set keybinds
-				opts.desc = "Show LSP references"
-				keymap.set("n", "gR", "<cmd>Telescope lsp_references<CR>", opts) -- show definition, references
-
-				opts.desc = "Go to declaration"
-				keymap.set("n", "gD", vim.lsp.buf.declaration, opts) -- go to declaration
-
-				opts.desc = "Show LSP definitions"
-				keymap.set("n", "gd", "<cmd>Telescope lsp_definitions<CR>", opts) -- show lsp definitions
-
-				opts.desc = "Show LSP implementations"
-				keymap.set("n", "gi", "<cmd>Telescope lsp_implementations<CR>", opts) -- show lsp implementations
-
-				opts.desc = "Show LSP type definitions"
-				keymap.set("n", "gt", "<cmd>Telescope lsp_type_definitions<CR>", opts) -- show lsp type definitions
-
-				opts.desc = "See available code actions"
-				keymap.set({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, opts) -- see available code actions, in visual mode will apply to selection
-
-				opts.desc = "Smart rename"
-				keymap.set("n", "gr", vim.lsp.buf.rename, opts) -- smart rename
-
-				opts.desc = "Show buffer diagnostics"
-				keymap.set("n", "<leader>D", "<cmd>Telescope diagnostics bufnr=0<CR>", opts) -- show  diagnostics for file
-
-				opts.desc = "Show line diagnostics"
-				keymap.set("n", "<leader>d", vim.diagnostic.open_float, opts) -- show diagnostics for line
-
-				opts.desc = "Go to previous diagnostic"
-				keymap.set("n", "[d", vim.diagnostic.goto_prev, opts) -- jump to previous diagnostic in buffer
-
-				opts.desc = "Go to next diagnostic"
-				keymap.set("n", "]d", vim.diagnostic.goto_next, opts) -- jump to next diagnostic in buffer
-
-				opts.desc = "Show documentation for what is under cursor"
-				keymap.set("n", "K", vim.lsp.buf.hover, opts) -- show documentation for what is under cursor
+			local capabilities = nil
+			if pcall(require, "cmp_nvim_lsp") then
+				capabilities = require("cmp_nvim_lsp").default_capabilities()
 			end
 
-			local capabilities = cmp_nvim_lsp.default_capabilities()
-			lspconfig["denols"].setup({
-				on_attach = on_attach,
-				root_dir = lspconfig.util.root_pattern("deno.json", "deno.jsonc"),
-			})
-			lspconfig["html"].setup({
-				capabilities = capabilities,
-				on_attach = on_attach,
-			})
-			lspconfig["astro"].setup({
-				capabilities = capabilities,
-				on_attach = on_attach,
-			})
-			lspconfig["rust_analyzer"].setup({
-				settings = {
-					["rust-analyzer"] = {
-						assist = {
-							importMergeBehavior = "last",
-							importPrefix = "by_self",
-						},
-						cargo = {
-							loadOutDirsFromCheck = true,
-						},
-						procMacro = {
-							enable = true,
-						},
-					},
-				},
-				capabilities = capabilities,
-				on_attach = on_attach,
-			})
-			-- configure typescript server with plugin
-			lspconfig["tsserver"].setup({
-				capabilities = capabilities,
-				on_attach = on_attach,
-				root_dir = lspconfig.util.root_pattern("package.json"),
-				single_file_support = false,
-			})
+			local lspconfig = require("lspconfig")
 
-			-- configure css server
-			lspconfig["cssls"].setup({
-				capabilities = capabilities,
-				on_attach = on_attach,
-			})
-
-			-- configure tailwindcss server
-			lspconfig["tailwindcss"].setup({
-				capabilities = capabilities,
-				on_attach = on_attach,
-			})
-
-			lspconfig["prismals"].setup({
-				capabilities = capabilities,
-				on_attach = on_attach,
-			})
-
-			lspconfig["emmet_ls"].setup({
-				capabilities = capabilities,
-				on_attach = on_attach,
-				filetypes = { "html", "typescriptreact", "javascriptreact", "css", "sass", "scss", "less", "svelte" },
-			})
-			lspconfig["pyright"].setup({
-				capabilities = capabilities,
-				on_attach = on_attach,
-			})
-
-			lspconfig["lua_ls"].setup({
-				capabilities = capabilities,
-				on_attach = on_attach,
-				settings = { -- custom settings for lua
-					Lua = {
-						-- make the language server recognize "vim" global
-						diagnostics = {
-							globals = { "vim" },
-						},
-						workspace = {
-							-- make language server aware of runtime files
-							library = {
-								[vim.fn.expand("$VIMRUNTIME/lua")] = true,
-								[vim.fn.stdpath("config") .. "/lua"] = true,
+			local servers = {
+				denols = {
+					root_dir = lspconfig.util.root_pattern("deno.json", "deno.jsonc"),
+					init_options = {
+						lint = true,
+						unstable = true,
+						suggest = {
+							imports = {
+								hosts = {
+									["https://deno.land"] = true,
+									["https://cdn.nest.land"] = true,
+									["https://crux.land"] = true,
+								},
 							},
 						},
 					},
 				},
+				bashls = true,
+				gopls = {
+					settings = {
+						gopls = {
+							hints = {
+								assignVariableTypes = true,
+								compositeLiteralFields = true,
+								compositeLiteralTypes = true,
+								constantValues = true,
+								functionTypeParameters = true,
+								parameterNames = true,
+								rangeVariableTypes = true,
+							},
+						},
+					},
+				},
+				lua_ls = true,
+				rust_analyzer = true,
+				templ = true,
+				cssls = true,
+
+				-- Probably want to disable formatting for this lang server
+				tsserver = {
+					root_dir = function(filename, bufnr)
+						local denoRootDir = lspconfig.util.root_pattern("deno.json", "deno.json")(filename)
+						if denoRootDir then
+							print("this seems to be a deno project; returning nil so that tsserver does not attach")
+							return nil
+						else
+							print("this seems to be a ts project; return root dir based on package.json")
+						end
+
+						return lspconfig.util.root_pattern("package.json")(filename)
+					end,
+					single_file_support = false,
+				},
+
+				jsonls = {
+					settings = {
+						json = {
+							schemas = require("schemastore").json.schemas(),
+							validate = { enable = true },
+						},
+					},
+				},
+
+				yamlls = {
+					settings = {
+						yaml = {
+							schemaStore = {
+								enable = false,
+								url = "",
+							},
+							schemas = require("schemastore").yaml.schemas(),
+						},
+					},
+				},
+
+				ocamllsp = {
+					manual_install = true,
+					settings = {
+						codelens = { enable = true },
+						inlayHints = { enable = true },
+					},
+
+					filetypes = {
+						"ocaml",
+						"ocaml.interface",
+						"ocaml.menhir",
+						"ocaml.cram",
+					},
+
+					-- TODO: Check if i still need the filtypes stuff i had before
+				},
+
+				lexical = {
+					cmd = { "/home/ishankbg/.local/share/nvim/mason/bin/lexical", "server" },
+					root_dir = require("lspconfig.util").root_pattern({ "mix.exs" }),
+				},
+
+				clangd = {
+					-- TODO: Could include cmd, but not sure those were all relevant flags.
+					--    looks like something i would have added while i was floundering
+					init_options = { clangdFileStatus = true },
+					filetypes = { "c" },
+				},
+			}
+
+			local servers_to_install = vim.tbl_filter(function(key)
+				local t = servers[key]
+				if type(t) == "table" then
+					return not t.manual_install
+				else
+					return t
+				end
+			end, vim.tbl_keys(servers))
+
+			require("mason").setup()
+			local ensure_installed = {
+				"stylua",
+				"lua_ls",
+				"delve",
+				-- "tailwind-language-server",
+			}
+
+			vim.list_extend(ensure_installed, servers_to_install)
+			require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
+
+			for name, config in pairs(servers) do
+				if config == true then
+					config = {}
+				end
+				config = vim.tbl_deep_extend("force", {}, {
+					capabilities = capabilities,
+				}, config)
+				lspconfig[name].setup(config)
+			end
+			local disable_semantic_tokens = {
+				lua = true,
+			}
+
+			vim.api.nvim_create_autocmd("LspAttach", {
+				callback = function(args)
+					local bufnr = args.buf
+					local client = assert(vim.lsp.get_client_by_id(args.data.client_id), "must have valid client")
+
+					vim.opt_local.omnifunc = "v:lua.vim.lsp.omnifunc"
+					vim.keymap.set("n", "gd", vim.lsp.buf.definition, { buffer = 0, desc = "Go to definition" })
+					vim.keymap.set("n", "gr", vim.lsp.buf.references, { buffer = 0, desc = "Go to references" })
+					vim.keymap.set("n", "gD", vim.lsp.buf.declaration, { buffer = 0, desc = "Go to declaration" })
+					vim.keymap.set(
+						"n",
+						"gT",
+						vim.lsp.buf.type_definition,
+						{ buffer = 0, desc = "Go to type definition" }
+					)
+					vim.keymap.set("n", "K", vim.lsp.buf.hover, { buffer = 0, desc = "Show hover" })
+
+					vim.keymap.set("n", "<space>cr", vim.lsp.buf.rename, { buffer = 0, desc = "Rename" })
+					vim.keymap.set("n", "<space>ca", vim.lsp.buf.code_action, { buffer = 0, desc = "Code action" })
+
+					local filetype = vim.bo[bufnr].filetype
+					if disable_semantic_tokens[filetype] then
+						client.server_capabilities.semanticTokensProvider = nil
+					end
+				end,
 			})
 
-			lspconfig["clangd"].setup({
-				capabilities = capabilities,
-				on_attach = on_attach,
+			-- Autoformatting Setup
+			require("conform").setup({
+				formatters_by_ft = {
+					lua = { "stylua" },
+					rust = { "rustfmt" },
+					typescript = { "prettier" },
+					javascript = { "prettier" },
+				},
+			})
+
+			vim.api.nvim_create_autocmd("BufWritePre", {
+				callback = function(args)
+					require("conform").format({
+						bufnr = args.buf,
+						lsp_fallback = true,
+						quiet = true,
+					})
+				end,
 			})
 		end,
 	},
