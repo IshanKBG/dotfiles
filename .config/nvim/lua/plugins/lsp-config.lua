@@ -22,7 +22,7 @@ return {
 				--   types = true,
 				-- },
 			})
-
+			require("java").setup()
 			local capabilities = nil
 			if pcall(require, "cmp_nvim_lsp") then
 				capabilities = require("cmp_nvim_lsp").default_capabilities()
@@ -47,6 +47,7 @@ return {
 						},
 					},
 				},
+				jdtls = true,
 				bashls = true,
 				gopls = {
 					settings = {
@@ -67,7 +68,6 @@ return {
 				rust_analyzer = true,
 				templ = true,
 				cssls = true,
-
 				-- Probably want to disable formatting for this lang server
 				tsserver = {
 					root_dir = function(filename, bufnr)
@@ -83,7 +83,7 @@ return {
 					end,
 					single_file_support = false,
 				},
-
+				zls = true,
 				jsonls = {
 					settings = {
 						json = {
@@ -104,7 +104,6 @@ return {
 						},
 					},
 				},
-
 				ocamllsp = {
 					manual_install = true,
 					settings = {
@@ -121,18 +120,13 @@ return {
 
 					-- TODO: Check if i still need the filtypes stuff i had before
 				},
-
-				lexical = {
-					cmd = { "/home/ishankbg/.local/share/nvim/mason/bin/lexical", "server" },
-					root_dir = require("lspconfig.util").root_pattern({ "mix.exs" }),
-				},
-
 				clangd = {
 					-- TODO: Could include cmd, but not sure those were all relevant flags.
 					--    looks like something i would have added while i was floundering
 					init_options = { clangdFileStatus = true },
-					filetypes = { "c" },
+					filetypes = { "c", "cpp" },
 				},
+				astro = true,
 			}
 
 			local servers_to_install = vim.tbl_filter(function(key)
