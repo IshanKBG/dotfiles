@@ -4,13 +4,17 @@
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
-alias cat="bat"
 alias ls="eza --icons --grid --classify --colour=auto --sort=type --group-directories-first --header --modified --created --git --binary --group"
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
 export PATH="$PATH:/opt/homebrew/bin/"
+export LDFLAGS="-L/opt/homebrew/opt/llvm/lib"
+export CPPFLAGS="-I/opt/homebrew/opt/llvm/include"
+export Qt6_DIR=/Users/ishankbg/Qt/6.7.2/macos/lib/cmake/Qt6
+export CPATH=/Users/ishankbg/Desktop/repos/tools/c-utils/zig-out/include:$CPATH
+export LIBRARY_PATH=/Users/ishankbg/Desktop/repos/tools/c-utils/zig-out/lib
 source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
@@ -118,3 +122,19 @@ test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell
 
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# Created by `pipx` on 2024-05-26 02:20:28
+export PATH="$PATH:/Users/ishankbg/.local/bin"
+
+# pnpm
+export PNPM_HOME="/Users/ishankbg/Library/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
+
+export WASMTIME_HOME="$HOME/.wasmtime"
+
+export PATH="$WASMTIME_HOME/bin:$PATH"
+export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
