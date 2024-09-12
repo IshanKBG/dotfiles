@@ -1,0 +1,7 @@
+theme = "darcula-solid"
+
+[editor]
+line-number = "relative"
+mouse = false
+[editor.soft-wrap]
+enable = true
