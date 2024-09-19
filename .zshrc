@@ -27,8 +27,6 @@ zinit snippet OMZP::sudo
 zinit snippet OMZP::rust
 zinit snippet OMZP::command-not-found
 zinit snippet OMZP::brew
-zinit ice depth=1
-zinit light jeffreytse/zsh-vi-mode
 autoload -Uz compinit && compinit
 zinit cdreplay -q
 # History
