@@ -8,7 +8,9 @@ if [[ ! -f $HOME/.local/share/zinit/zinit.git/zinit.zsh ]]; then
         print -P "%F{160} The clone has failed.%f%b"
 fi
 export PATH="$PATH:/opt/homebrew/bin/"
+export PATH="$PATH:$HOME/.local/share/bob/nvim-bin"
 export LDFLAGS="-L/opt/homebrew/opt/llvm/lib"
+export PATH="$PATH:$HOME/.local/bin"
 export CPPFLAGS="-I/opt/homebrew/opt/llvm/include"
 eval "$(zoxide init zsh)"
 source "$HOME/.local/share/zinit/zinit.git/zinit.zsh"
