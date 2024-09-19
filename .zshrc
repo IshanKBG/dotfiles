@@ -27,6 +27,8 @@ zinit snippet OMZP::sudo
 zinit snippet OMZP::rust
 zinit snippet OMZP::command-not-found
 zinit snippet OMZP::brew
+zinit ice depth=1
+zinit light jeffreytse/zsh-vi-mode
 autoload -Uz compinit && compinit
 zinit cdreplay -q
 # History
@@ -51,3 +53,8 @@ zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'ls --color $realpath'
 ### End of Zinit's installer chunk
 eval "$(oh-my-posh init zsh --config ~/.config/ohmyposh/config.toml )"
 source <(fzf --zsh)
+alias ls="ls --color"
+alias vim=nvim
+
+[ -f "/Users/ishankbg/.ghcup/env" ] && . "/Users/ishankbg/.ghcup/env" # ghcup-env
+eval "$(zellij setup --generate-auto-start zsh)"
